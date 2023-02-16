@@ -10,7 +10,7 @@ def load_txt_file(txt_path):
 
     for file in files:
         position = txt_path + '/' + file
-        with open(position, "r", encoding='utf-8') as f:
+        with open(position, "r", encoding='windows-1252') as f:
             txt = f.read()
             txts[index] = txt
             index += 1

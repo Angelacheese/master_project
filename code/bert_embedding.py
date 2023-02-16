@@ -1,5 +1,5 @@
 # # dataset
-# from load_dataset import *
+from load_dataset import *
 # torch
 import torch
 from torch.utils.data import Dataset, DataLoader
@@ -108,5 +108,17 @@ def convert_to_bert(ids_embeddings_dir, segment_embeddings_dir):
     return bert_output
 
 
-# label = torch.ones(len(ids_embeddings_dir))
-# label
+def convert_bert_truthful(txt_path_truthful):
+    df_txt_truthful = load_txt_file(txt_path_truthful)
+    txt_ids_dict_truthful, txt_segment_dict_truthful = txts_convert_dict(
+        df_txt_truthful)
+    bert_truthful = convert_to_bert(
+        txt_ids_dict_truthful, txt_segment_dict_truthful)
+    return bert_truthful
+
+
+def convert_bert_yelp(yelp_path):
+    df_yelp = load_yelp_csv(yelp_path)
+    yelp_ids_dict, yelp_segment_dict = yelp_convert_dict(df_yelp, 10)
+    bert_yelp = convert_to_bert(yelp_ids_dict, yelp_segment_dict)
+    return bert_yelp

@@ -105,8 +105,5 @@ def train_model(device, epochs, dataloader, ae_train, optimizer_ae, scheduler):
         print('[{}/{}] Loss:'.format(epoch+1, epochs), total_loss.item())
 
     print('average loss:', log_loss)
-    # plt.plot(log_loss)
-    # plt.savefig('log_loss_plot.png')
-    # print('every data loss:', data_loss)
     plt.plot(data_loss)
-    torch.save(ae_train, 'autoencoder16.pth')  # Save
+    torch.save(ae_train, 'autoencoder1.pth')  # Save
