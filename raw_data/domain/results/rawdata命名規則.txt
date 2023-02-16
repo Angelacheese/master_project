@@ -1,0 +1,5 @@
+Yelp_Doctors_CommentsStarsGt4UsefulGt0_BusinessStarsGt3.5
+
+=
+
+Yelp_Doctors_4_0_3.5
