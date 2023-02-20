@@ -1,9 +1,5 @@
-# tqdm(range(1, epochs+1))
-# bert處理後
 from bert_embedding import *
 import matplotlib.pyplot as plt
-import tqdm
-# torch
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -28,6 +24,10 @@ class aeEncoder(nn.Module):
             nn.Tanh(),
             nn.Linear(32, 16),
             nn.Tanh(),
+            nn.Linear(16, 4),
+            nn.Tanh(),
+            nn.Linear(4, 2),
+            nn.Tanh(),
         )
 
     def forward(self, inputs):
@@ -40,6 +40,10 @@ class aeDecoder(nn.Module):
         super(aeDecoder, self).__init__()
 
         self.decoder = nn.Sequential(
+            nn.Linear(2, 4),
+            nn.Tanh(),
+            nn.Linear(4, 16),
+            nn.Tanh(),
             nn.Linear(16, 32),
             nn.Tanh(),
             nn.Linear(32, 64),
@@ -104,6 +108,5 @@ def train_model(device, epochs, dataloader, ae_train, optimizer_ae, scheduler):
         scheduler.step()
         print('[{}/{}] Loss:'.format(epoch+1, epochs), epoch_loss.item())
 
-    plt.plot(data_loss)
-    torch.save(ae_train, 'autoencoder_1.pth')  # Save
+    torch.save(ae_train, 'autoencoder_4.pth')
     return epochs_loss, data_loss
