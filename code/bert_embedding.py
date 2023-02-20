@@ -1,37 +1,37 @@
-# # dataset
 from load_dataset import *
-# torch
 import torch
-from torch.utils.data import Dataset, DataLoader
-# BERT
 from transformers import BertTokenizer, BertModel
+from torch.utils.data import Dataset, DataLoader
 from IPython.display import clear_output
 
 
+# ------------------------------------------------------ bert setting
 pretrained_model = "bert-base-cased"  # 指定預訓練模型
 tokenizer = BertTokenizer.from_pretrained(pretrained_model)  # 分詞器
 bert_model = BertModel.from_pretrained(
     pretrained_model, output_attentions=True)
-clear_output()  # 怕輸出太多文件太大，及時清除 notebook 的輸出
+clear_output()
 
 
-def txts_convert_dict(df_txt_comments):
+# ------------------------------------------------------ 前處理token, segment, position
+def txts_convert_dict(df_txt):
     # BERT tokens: [CLS] = 101, [SEP] = 102
     ids_embeddings_dir = {}
     ids_index = 0
     segment_embeddings_dir = {}
     segment_index = 0
-    maxlen = 100
+    maxlen = 200
 
-    for num in df_txt_comments:
-        comment = df_txt_comments[num]
+    for num in df_txt:
+        comment = df_txt[num]
         temp_sentence = []
 
-        # 前處理: split, tokenize
+        # 前處理，分句，轉小寫
         for sentence in comment.lower().split("."):
             token_sentence = tokenizer.tokenize(sentence)
             token_sentence += ["[SEP]"]
             temp_sentence += token_sentence
+
         token_comment = ["[CLS]"] + temp_sentence
 
         # 檢查長度符合 maxlen: ['PAD']
@@ -106,19 +106,3 @@ def convert_to_bert(ids_embeddings_dir, segment_embeddings_dir):
 
         bert_output.append(output[0])
     return bert_output
-
-
-def convert_bert_truthful(txt_path_truthful):
-    df_txt_truthful = load_txt_file(txt_path_truthful)
-    txt_ids_dict_truthful, txt_segment_dict_truthful = txts_convert_dict(
-        df_txt_truthful)
-    bert_truthful = convert_to_bert(
-        txt_ids_dict_truthful, txt_segment_dict_truthful)
-    return bert_truthful
-
-
-def convert_bert_yelp(yelp_path):
-    df_yelp = load_yelp_csv(yelp_path)
-    yelp_ids_dict, yelp_segment_dict = yelp_convert_dict(df_yelp, 10)
-    bert_yelp = convert_to_bert(yelp_ids_dict, yelp_segment_dict)
-    return bert_yelp

@@ -69,10 +69,10 @@ class AutoEncoder(nn.Module):
         return codes, decoded
 
 
-def create_loader(dataset):
+def create_loader(dataset, batch):
     dataloader = DataLoader(
         dataset=dataset,
-        batch_size=1,
+        batch_size=batch,
         shuffle=False
     )
 
@@ -81,10 +81,10 @@ def create_loader(dataset):
 
 def train_model(device, epochs, dataloader, ae_train, optimizer_ae, scheduler):
     loss_function = nn.MSELoss().to(device)
-    log_loss = []
+    epochs_loss = []
 
     for epoch in range(epochs):
-        total_loss = 0
+        epoch_loss = 0
         data_loss = []
 
         for data in dataloader:
@@ -92,18 +92,18 @@ def train_model(device, epochs, dataloader, ae_train, optimizer_ae, scheduler):
             ae_train.zero_grad()
 
             # forward
-            codes, decoded = ae_train(inputs)
+            c, decoded = ae_train(inputs)
             loss = loss_function(decoded, inputs)
             loss.backward(retain_graph=True)
             optimizer_ae.step()
-            total_loss += loss
+            epoch_loss += loss
             data_loss.append(loss.item())
 
-        total_loss /= len(dataloader.dataset)
-        log_loss.append(total_loss.item())
+        epoch_loss /= len(dataloader.dataset)
+        epochs_loss.append(epoch_loss.item())
         scheduler.step()
-        print('[{}/{}] Loss:'.format(epoch+1, epochs), total_loss.item())
+        print('[{}/{}] Loss:'.format(epoch+1, epochs), epoch_loss.item())
 
-    print('average loss:', log_loss)
     plt.plot(data_loss)
-    torch.save(ae_train, 'autoencoder1.pth')  # Save
+    torch.save(ae_train, 'autoencoder_1.pth')  # Save
+    return epochs_loss, data_loss
